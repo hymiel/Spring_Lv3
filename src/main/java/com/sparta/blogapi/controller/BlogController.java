@@ -3,10 +3,10 @@ package com.sparta.blogapi.controller;
 import com.sparta.blogapi.dto.BlogRequestDto;
 import com.sparta.blogapi.dto.BlogResponseDto;
 import com.sparta.blogapi.entity.Blog;
+import com.sparta.blogapi.repository.BlogRepository;
 import com.sparta.blogapi.service.BlogService;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,17 +14,19 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api")
 public class BlogController {
+    private final BlogService blogService;
+    private BlogRepository blogRepository;
 
-    //데이터 베이스 대신 Map 사용
-    private final Map<Long, Blog> postList = new HashMap<>();
-
+    public BlogController(BlogService blogService) {
+        this.blogService = blogService;
+    }
 
     //전체 게시글 목록 조회 API
     //- 제목, 작성자명, 작성 내용, 작성 날짜를 조회하기
     //- 작성 날짜 기준 내림차순으로 정렬하기
     @GetMapping("/posts")
     public List<BlogResponseDto> getPosts() {
-        BlogService blogService = new BlogService();
+        BlogService blogService = new BlogService(blogRepository);
         return blogService.getPosts();
     }
 
@@ -32,7 +34,7 @@ public class BlogController {
     //- 제목, 작성자명, 비밀번호, 작성 내용을 저장하고 저장된 게시글을 Client 로 반환하기
     @PostMapping("/posts")
     public BlogResponseDto createPost(@RequestBody BlogRequestDto requestDto) {
-        BlogService blogService = new BlogService();
+        BlogService blogService = new BlogService(blogRepository);
         return blogService.createPost(requestDto);
     }
 
@@ -41,7 +43,7 @@ public class BlogController {
     // - (검색 기능이 아닙니다. 간단한 게시글 조회만 구현해주세요.)
     @GetMapping("/post/{id}")
     public Long getSelectPost(@PathVariable Long id, @RequestBody BlogRequestDto requestDto) {
-        BlogService blogService = new BlogService();
+        BlogService blogService = new BlogService(blogRepository);
         return blogService.getSelectPost(id, requestDto);
     }
 
@@ -50,7 +52,7 @@ public class BlogController {
     // - 제목, 작성자명, 작성 내용을 수정하고 수정된 게시글을 Client 로 반환하기
     @PutMapping("/post/{id}")
     public Long updatePost(@PathVariable Long id, @RequestBody BlogRequestDto requestDto) {
-        BlogService blogService = new BlogService();
+        BlogService blogService = new BlogService(blogRepository);
         return blogService.updatePost(id, requestDto);
     }
 
@@ -59,7 +61,7 @@ public class BlogController {
     // - 선택한 게시글을 삭제하고 Client 로 성공했다는 표시 반환하기
     @DeleteMapping("/post/{id}")
     public Long deletePost(@PathVariable Long id) {
-        BlogService blogService = new BlogService();
+        BlogService blogService = new BlogService(blogRepository);
         return blogService.deletePost(id);
     }
 }
