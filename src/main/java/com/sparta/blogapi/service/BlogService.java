@@ -6,27 +6,29 @@ import com.sparta.blogapi.dto.BlogResponseDto;
 import com.sparta.blogapi.entity.Blog;
 import com.sparta.blogapi.repository.BlogRepository;
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor //생성자 주입으로 데이터베이스에 대한 생성자를 생성하지 않아도 됨
 public class BlogService {
-    private final BlogRepository blogRepository;
 
-    public BlogService(BlogRepository blogRepository) {
-        this.blogRepository = blogRepository;
-    }
+    private final BlogRepository blogRepository; //데이터 베이스
 
 
+    //전체 게시글 목록 조회 API
+    //- 제목, 작성자명, 작성 내용, 작성 날짜를 조회하기
+    //- 작성 날짜 기준 내림차순으로 정렬하기
     public List<BlogResponseDto> getPosts() {
         //DB 조회, 내림차순 정렬
         return blogRepository.findAllByOrderByModifiedAtDesc().stream()
                 .map(BlogResponseDto::new).toList();
     }
 
-
-    // Post 작성
+    //게시글 작성 API
+    //- 제목, 작성자명, 비밀번호, 작성 내용을 저장하고 저장된 게시글을 Client 로 반환하기
     @Transactional
     public BlogResponseDto createPost(BlogRequestDto requestDto) {
         //RequestDto -> Entity (데이터 베이스랑 소통하는 Entity class로 변경)
@@ -37,8 +39,10 @@ public class BlogService {
         return new BlogResponseDto(blog);
     }
 
-
-    @Transactional
+    //선택한 게시글 조회 API
+    // - 선택한 게시글의 제목, 작성자명, 작성 날짜, 작성 내용을 조회하기
+    // - (검색 기능이 아닙니다. 간단한 게시글 조회만 구현해주세요.)
+    @Transactional //readOnly 기능을 사용하려 했으나 오류가 남
     public BlogResponseDto getSelectPost(Long id) {
         Blog blog = blogRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("아이디가 일치하지 않습니다.")); //
@@ -46,7 +50,9 @@ public class BlogService {
         return new BlogResponseDto(blog);
     }
 
-    //게시글 수정
+    //선택한 게시글 수정 API
+    // - 수정을 요청할 때 수정할 데이터와 비밀번호를 같이 보내서 서버에서 비밀번호 일치 여부를 확인 한 후
+    // - 제목, 작성자명, 작성 내용을 수정하고 수정된 게시글을 Client 로 반환하기
     @Transactional //트랜잭션 변경 감지
     public BlogResponseDto updatePost(Long id, BlogRequestDto requestDto, String password) {
 
@@ -66,6 +72,9 @@ public class BlogService {
         }
     }
 
+    //선택한 게시글 삭제 API
+    // - 삭제를 요청할 때 비밀번호를 같이 보내서 서버에서 비밀번호 일치 여부를 확인 한 후
+    // - 선택한 게시글을 삭제하고 Client 로 성공했다는 표시 반환하기
     @Transactional
     public BlogDeleteDto deletePost(Long id, String password) {
         //아이디 값을 레포지토리에서 가져온 뒤, 해당하는 데이터가 없을 경우 예외

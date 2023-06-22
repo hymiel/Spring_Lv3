@@ -40,9 +40,4 @@ public class Blog extends Timestamped{
         this.contents = requestDto.getContents();
     }
 
-    public void getPost(BlogRequestDto requestDto) {
-        this.title = requestDto.getTitle();
-        this.username = requestDto.getUsername();
-        this.contents = requestDto.getContents();
-    }
 }
