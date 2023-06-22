@@ -8,7 +8,8 @@ import java.time.LocalDateTime;
 
 @Getter
     public class BlogResponseDto {
-        private Long id;
+    // 게시물 조회 요청에 대한 응답으로 사용
+    // id 값과 password값은 X
         private String title;
         private String username;
         private String contents;
@@ -16,7 +17,6 @@ import java.time.LocalDateTime;
         private LocalDateTime mpdifieAt;
 
         public BlogResponseDto(Blog blog) {
-            this.id = blog.getId();
             this.title = blog.getTitle();
             this.username = blog.getUsername();
             this.contents = blog.getContents();

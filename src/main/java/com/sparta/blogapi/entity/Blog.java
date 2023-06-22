@@ -23,6 +23,8 @@ public class Blog extends Timestamped{
         private String username; //작성자명
         @Column(name = "contents", nullable = false, length = 500)
         private String contents; //작성내용
+        @Column(name = "password", nullable = false,length = 500)
+        private String password;
 
 
     public Blog(BlogRequestDto requestDto) {

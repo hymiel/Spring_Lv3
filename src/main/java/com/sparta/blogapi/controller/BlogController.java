@@ -1,21 +1,19 @@
 package com.sparta.blogapi.controller;
 
+import com.sparta.blogapi.dto.BlogDeleteDto;
 import com.sparta.blogapi.dto.BlogRequestDto;
 import com.sparta.blogapi.dto.BlogResponseDto;
-import com.sparta.blogapi.entity.Blog;
 import com.sparta.blogapi.repository.BlogRepository;
 import com.sparta.blogapi.service.BlogService;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api")
 public class BlogController {
     private final BlogService blogService;
-    private BlogRepository blogRepository;
+
 
     public BlogController(BlogService blogService) {
         this.blogService = blogService;
@@ -26,15 +24,13 @@ public class BlogController {
     //- 작성 날짜 기준 내림차순으로 정렬하기
     @GetMapping("/posts")
     public List<BlogResponseDto> getPosts() {
-        BlogService blogService = new BlogService(blogRepository);
-        return blogService.getPosts();
+         return blogService.getPosts();
     }
 
     //게시글 작성 API
     //- 제목, 작성자명, 비밀번호, 작성 내용을 저장하고 저장된 게시글을 Client 로 반환하기
     @PostMapping("/posts")
     public BlogResponseDto createPost(@RequestBody BlogRequestDto requestDto) {
-        BlogService blogService = new BlogService(blogRepository);
         return blogService.createPost(requestDto);
     }
 
@@ -42,26 +38,23 @@ public class BlogController {
     // - 선택한 게시글의 제목, 작성자명, 작성 날짜, 작성 내용을 조회하기
     // - (검색 기능이 아닙니다. 간단한 게시글 조회만 구현해주세요.)
     @GetMapping("/post/{id}")
-    public Long getSelectPost(@PathVariable Long id, @RequestBody BlogRequestDto requestDto) {
-        BlogService blogService = new BlogService(blogRepository);
-        return blogService.getSelectPost(id, requestDto);
+    public BlogResponseDto getSelectPost(@PathVariable Long id) {
+        return blogService.getSelectPost(id);
     }
 
     //선택한 게시글 수정 API
     // - 수정을 요청할 때 수정할 데이터와 비밀번호를 같이 보내서 서버에서 비밀번호 일치 여부를 확인 한 후
     // - 제목, 작성자명, 작성 내용을 수정하고 수정된 게시글을 Client 로 반환하기
     @PutMapping("/post/{id}")
-    public Long updatePost(@PathVariable Long id, @RequestBody BlogRequestDto requestDto) {
-        BlogService blogService = new BlogService(blogRepository);
-        return blogService.updatePost(id, requestDto);
+    public BlogResponseDto updatePost(@PathVariable Long id,@RequestBody BlogRequestDto requestDto) {
+        return blogService.updatePost(id, requestDto, requestDto.getPassword());
     }
 
     //선택한 게시글 삭제 API
     // - 삭제를 요청할 때 비밀번호를 같이 보내서 서버에서 비밀번호 일치 여부를 확인 한 후
     // - 선택한 게시글을 삭제하고 Client 로 성공했다는 표시 반환하기
     @DeleteMapping("/post/{id}")
-    public Long deletePost(@PathVariable Long id) {
-        BlogService blogService = new BlogService(blogRepository);
-        return blogService.deletePost(id);
+    public BlogDeleteDto deletePost(@PathVariable Long id, @RequestBody BlogRequestDto requestDto) {
+        return blogService.deletePost(id, requestDto.getPassword());
     }
 }
