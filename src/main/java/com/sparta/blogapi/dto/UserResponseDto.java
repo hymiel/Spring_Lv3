@@ -1,20 +1,16 @@
 package com.sparta.blogapi.dto;
 
-import com.sparta.blogapi.entity.User;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
+@NoArgsConstructor
 public class UserResponseDto {
 
-    private String username;
-    private String password;
-    private String msg;
-    private Integer statusCode;
+    private String msg;       // 성공 메세지
+    private Integer statusCode; // 상태코드
 
-    public UserResponseDto(User user, String msg, Integer statusCode) {
-
-        this.username = user.getUsername();
-        this.password = user.getPassword();
+    public UserResponseDto(String msg, Integer statusCode) {
         this.msg = msg;
         this.statusCode = statusCode;
     }

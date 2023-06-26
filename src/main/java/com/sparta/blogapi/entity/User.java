@@ -9,13 +9,14 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity //Entity Class
-// 게터세터 어노테이션
 
+// 게터세터 어노테이션
 @Getter
 @Setter
 @NoArgsConstructor
 @Table(name = "users") //user 는 예약어기 때문에 사용이 불가!
-public class User {
+public class User {    //사용자 정보 클래스
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     //id 값을 따로 할당하지 않고 자동으로 기본키 생성

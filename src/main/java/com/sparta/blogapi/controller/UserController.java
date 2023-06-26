@@ -1,16 +1,17 @@
 package com.sparta.blogapi.controller;
 
+import com.sparta.blogapi.dto.LoginRequestDto;
 import com.sparta.blogapi.dto.SignupRequestDto;
-import com.sparta.blogapi.dto.UserRequestDto;
 import com.sparta.blogapi.dto.UserResponseDto;
 import com.sparta.blogapi.service.UserService;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
+
+@Slf4j
 @RestController
 @RequestMapping("/api")
 @RequiredArgsConstructor  //생성자 주입으로 userService에 대한 생성자를 생성하지 않아도 됨
@@ -20,18 +21,17 @@ public class UserController {
 
 
 //    1. 회원 가입 API
-    @PostMapping("/signup")
-    public UserResponseDto signup(@RequestBody SignupRequestDto requestDto){
-        return userService.signup(requestDto);
+    @PostMapping("/user/signup")
+    public UserResponseDto signup(@RequestBody SignupRequestDto requestDto,HttpServletResponse res){
+        return userService.signup(requestDto,res);
     }
 
 
 
 //2. 로그인 API
+    @PostMapping("/user/login")
+    public UserResponseDto login(@RequestBody LoginRequestDto requestDto, HttpServletResponse res) throws IOException {
 
-
-    @PostMapping("/login")
-    public UserResponseDto login(@RequestBody UserRequestDto requestDto, HttpServletResponse res) {
-        return UserService.login();
+        return userService.login(requestDto,res);
     }
 }

@@ -1,15 +1,13 @@
 package com.sparta.blogapi.dto;
 
 
-import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
-import lombok.Setter;
 
 @Getter
-@Setter
+
 public class SignupRequestDto { // 회원가입 시 필요한 정보
 
     //username은  `최소 4자 이상, 10자 이하이며 알파벳 소문자(a~z), 숫자(0~9)`로 구성되어야 한다.

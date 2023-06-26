@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @Table(name = "bolgpost")
-@NoArgsConstructor
+@NoArgsConstructor //파라미터가 없는 기본 생성자를 만들어줌
 public class Blog extends Timestamped{
         @Id
         @GeneratedValue(strategy = GenerationType.IDENTITY)
