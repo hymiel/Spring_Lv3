@@ -27,6 +27,10 @@ public class Blog extends Timestamped{
         private String password;
 
 
+        //setAuthor
+        @ManyToOne
+        @JoinColumn(name = "user_id")
+        private User author;
     public Blog(BlogRequestDto requestDto) {
         this.title = requestDto.getTitle();
         this.username = requestDto.getUsername();
@@ -39,5 +43,8 @@ public class Blog extends Timestamped{
         this.username = requestDto.getUsername();
         this.contents = requestDto.getContents();
     }
-
+    public void setAuthor(String username) {
+        this.author = new User();
+        this.author.setUsername(username);
+    }
 }

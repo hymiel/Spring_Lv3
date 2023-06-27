@@ -4,10 +4,18 @@ import com.sparta.blogapi.dto.BlogDeleteDto;
 import com.sparta.blogapi.dto.BlogRequestDto;
 import com.sparta.blogapi.dto.BlogResponseDto;
 import com.sparta.blogapi.entity.Blog;
+import com.sparta.blogapi.jwt.InvalidTokenException;
+import com.sparta.blogapi.jwt.JwtUtil;
 import com.sparta.blogapi.repository.BlogRepository;
-import jakarta.transaction.Transactional;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import java.util.List;
 
@@ -16,7 +24,13 @@ import java.util.List;
 public class BlogService {
 
     private final BlogRepository blogRepository; //데이터 베이스
+    private final JwtUtil jwtUtil;
 
+//    @Autowired > RequiredArgsConstructor 미 사용 시 직접 생성자 작성
+//    public BlogService(JwtUtil jwtUtil, BlogRepository blogRepository) {
+//        this.jwtUtil = jwtUtil;
+//        this.blogRepository = blogRepository;
+//    }
 
     //전체 게시글 목록 조회 API
     //- 제목, 작성자명, 작성 내용, 작성 날짜를 조회하기
@@ -30,11 +44,24 @@ public class BlogService {
     //게시글 작성 API
     //- 제목, 작성자명, 비밀번호, 작성 내용을 저장하고 저장된 게시글을 Client 로 반환하기
     @Transactional
-    public BlogResponseDto createPost(BlogRequestDto requestDto) {
+    public BlogResponseDto createPost(BlogRequestDto requestDto) throws InvalidTokenException {
+        // 사용자 인증 정보 가져오기
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+
+        //토큰 유효성 검사
+        String token = getTokenFromHeader(); // HTTP 헤더에서 토큰 추출
+        if (!jwtUtil.validateToken(token)) {
+            throw new InvalidTokenException("유효하지 않은 토큰입니다.");
+        }
+
         //RequestDto -> Entity (데이터 베이스랑 소통하는 Entity class로 변경)
         Blog blog = new Blog(requestDto); //requestDto한테 클라이언트가 보내준 데이터를 값으로 들어옴
+        blog.setAuthor(username);
+
         //DB 저장
-        blogRepository.save(blog);
+        Blog savedBlog = blogRepository.save(blog);
+
         //Entity -> ResponseDto
         return new BlogResponseDto(blog);
     }
@@ -42,11 +69,10 @@ public class BlogService {
     //선택한 게시글 조회 API
     // - 선택한 게시글의 제목, 작성자명, 작성 날짜, 작성 내용을 조회하기
     // - (검색 기능이 아닙니다. 간단한 게시글 조회만 구현해주세요.)
-    @Transactional //readOnly 기능을 사용하려 했으나 오류가 남
+    @Transactional(readOnly = true)
     public BlogResponseDto getSelectPost(Long id) {
         Blog blog = blogRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("아이디가 일치하지 않습니다.")); //
-
+                .orElseThrow(() -> new IllegalArgumentException("아이디가 일치하지 않습니다."));
         return new BlogResponseDto(blog);
     }
 
@@ -91,5 +117,17 @@ public class BlogService {
             throw new IllegalArgumentException("비밀번호가 일치하지 않습니다");
         }
         return blogDeleteDto;
+    }
+
+    //헤더에서 토큰 추출
+    private String getTokenFromHeader() throws InvalidTokenException {
+        HttpServletRequest request // 현재 요청 정보 받고
+                = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+        String authorizationHeader = request.getHeader("Authorization");
+        if (StringUtils.hasText(authorizationHeader) && authorizationHeader.startsWith("Bearer")) //Authorization -> null X,Bearer로 시작하는 토큰값만 추출
+        {
+            return jwtUtil.subStringToken(authorizationHeader); // 토큰 값을 추출
+        }
+        return authorizationHeader;
     }
 }
