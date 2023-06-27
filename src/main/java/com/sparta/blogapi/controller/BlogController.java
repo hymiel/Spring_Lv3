@@ -3,6 +3,7 @@ package com.sparta.blogapi.controller;
 import com.sparta.blogapi.dto.BlogDeleteDto;
 import com.sparta.blogapi.dto.BlogRequestDto;
 import com.sparta.blogapi.dto.BlogResponseDto;
+import com.sparta.blogapi.jwt.InvalidTokenException;
 import com.sparta.blogapi.repository.BlogRepository;
 import com.sparta.blogapi.service.BlogService;
 import org.springframework.web.bind.annotation.*;
@@ -28,7 +29,7 @@ public class BlogController {
 
     //게시글 작성 API
     @PostMapping("/posts")
-    public BlogResponseDto createPost(@RequestBody BlogRequestDto requestDto) {
+    public BlogResponseDto createPost(@RequestBody BlogRequestDto requestDto) throws InvalidTokenException {
         return blogService.createPost(requestDto);
     }
 
