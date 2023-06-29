@@ -60,7 +60,7 @@ public class BlogService {
         blog.setAuthor(username);
 
         //DB 저장
-        Blog savedBlog = blogRepository.save(blog);
+        Blog saveBlog = blogRepository.save(blog);
 
         //Entity -> ResponseDto
         return new BlogResponseDto(blog);
@@ -81,7 +81,6 @@ public class BlogService {
     // - 제목, 작성자명, 작성 내용을 수정하고 수정된 게시글을 Client 로 반환하기
     @Transactional //트랜잭션 변경 감지
     public BlogResponseDto updatePost(Long id, BlogRequestDto requestDto, String password) {
-
         //아이디 값을 레포지토리에서 가져온 뒤, 해당하는 데이터가 없을 경우 예외
         Blog blog = blogRepository.findById(id).orElseThrow(() ->
                 new IllegalArgumentException("아이디가 존재하지 않습니다."));

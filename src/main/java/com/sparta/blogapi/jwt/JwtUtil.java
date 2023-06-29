@@ -91,14 +91,17 @@ public class JwtUtil {
     }
 
     // header 에서 JWT 가져오기
-    public String getJwtFromHeader(HttpServletRequest request) {
-        String bearerToken = request.getHeader(AUTHORIZATION_HEADER); // JWT를 전송하기 위해 사용
-        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(BEARER_PREFIX)) { //bearerToken 이 유효한 값인지 확인
-            return bearerToken.substring(7); //문자열에서 인덱스 7부터 끝까지의 부분 문자열을 추출
-        }
-        return null;
-    }
-
+//    public String getJwtFromHeader(HttpServletRequest request) {
+//        String bearerToken = request.getHeader(AUTHORIZATION_HEADER); // JWT를 전송하기 위해 사용
+//        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(BEARER_PREFIX)) { //bearerToken 이 유효한 값인지 확인
+//            return bearerToken.substring(7); //문자열에서 인덱스 7부터 끝까지의 부분 문자열을 추출
+//        }
+//        return null;
+//    }
+    //토큰에서 사용자 정보 가져오기
+//    public Claims getUserInfoFromToken(String token) {
+//        return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
+//    }
     //토큰 검증
     public boolean validateToken(String token) {
         try{
@@ -121,9 +124,5 @@ public class JwtUtil {
         return false;
     }
 
-    //토큰에서 사용자 정보 가져오기
-    public Claims getUserInfoFromToken(String token) {
-        return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
 
-    }
 }
