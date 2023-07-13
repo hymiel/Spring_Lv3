@@ -50,7 +50,7 @@ public class BlogService {
         String username = authentication.getName();
 
         //토큰 유효성 검사
-        String token = getTokenFromHeader(); // HTTP 헤더에서 토큰 추출
+        String token = jwtUtil.getJwtFromHeader((HttpServletRequest) requestDto); // HTTP 헤더에서 토큰 추출
         if (!jwtUtil.validateToken(token)) {
             throw new InvalidTokenException("유효하지 않은 토큰입니다.");
         }
@@ -118,15 +118,15 @@ public class BlogService {
         return blogDeleteDto;
     }
 
-    //헤더에서 토큰 추출
-    private String getTokenFromHeader() throws InvalidTokenException {
-        HttpServletRequest request // 현재 요청 정보 받고
-                = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
-        String authorizationHeader = request.getHeader("Authorization");
-        if (StringUtils.hasText(authorizationHeader) && authorizationHeader.startsWith("Bearer")) //Authorization -> null X,Bearer로 시작하는 토큰값만 추출
-        {
-            return jwtUtil.subStringToken(authorizationHeader); // 토큰 값을 추출
-        }
-        return authorizationHeader;
-    }
+    //헤더에서 토큰 추출 - 튜터님 피드백으로 주석처리
+//    private String getTokenFromHeader() throws InvalidTokenException {
+//        HttpServletRequest request // 현재 요청 정보 받고
+//                = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+//        String authorizationHeader = request.getHeader("Authorization");
+//        if (StringUtils.hasText(authorizationHeader) && authorizationHeader.startsWith("Bearer")) //Authorization -> null X,Bearer로 시작하는 토큰값만 추출
+//        {
+//            return subStringToken(authorizationHeader); // 토큰 값을 추출
+//        }
+//        return authorizationHeader;
+//    }
 }
