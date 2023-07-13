@@ -7,6 +7,8 @@ import com.sparta.blogapi.service.UserService;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -21,9 +23,17 @@ public class UserController {
 
 
 //    1. 회원 가입 API
+//    @PostMapping("/user/signup")ㅌ
+//    public UserResponseDto signup(@RequestBody SignupRequestDto requestDto,HttpServletResponse res){
+//        return userService.signup(requestDto,res);
+//    }
+
+    // 튜터님 피드백으로 바꾼 코드
+    // 위 코드에서처럼 DTO를 그대로 응답하고있는데 ResponseEntity 로 감싸서 응답하는것을 추천드립니다.
     @PostMapping("/user/signup")
-    public UserResponseDto signup(@RequestBody SignupRequestDto requestDto,HttpServletResponse res){
-        return userService.signup(requestDto,res);
+    public ResponseEntity<UserResponseDto> signup(@RequestBody SignupRequestDto requestDto, HttpServletResponse res){
+        UserResponseDto userResponseDto = userService.signup(requestDto, res);
+        return new ResponseEntity<>(userResponseDto, HttpStatus.OK);
     }
 
 
