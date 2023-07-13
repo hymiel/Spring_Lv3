@@ -29,7 +29,7 @@ public class BlogController {
 
     //게시글 작성 API
     @PostMapping("/posts")
-    public BlogResponseDto createPost(@RequestBody BlogRequestDto requestDto) throws InvalidTokenException {
+    public BlogResponseDto createPost(@RequestBody BlogRequestDto requestDto)throws InvalidTokenException{
         return blogService.createPost(requestDto);
     }
 
@@ -39,15 +39,29 @@ public class BlogController {
         return blogService.getSelectPost(id);
     }
 
+
+    // 튜터님 피드백으로 코드 수정 : equestDto 를 넘겨주는데 그안에있는 비밀번호를 또 넘겨주고 있는게 중복
+    // 기존코드
+//    @PutMapping("/post/{id}")
+//    public BlogResponseDto updatePost(@PathVariable Long id,@RequestBody BlogRequestDto requestDto) {
+//        return blogService.updatePost(id, requestDto, requestDto.getPassword());
+//    }
+    //선택한 게시글 삭제 API
+//    @DeleteMapping("/post/{id}")
+//    public BlogDeleteDto deletePost(@PathVariable Long id, @RequestBody BlogRequestDto requestDto) {
+//        return blogService.deletePost(id, requestDto.getPassword());
+//    }
+
+    //수정코드 : 비밀번호 관련 중복코드 삭제
     //선택한 게시글 수정 API
     @PutMapping("/post/{id}")
     public BlogResponseDto updatePost(@PathVariable Long id,@RequestBody BlogRequestDto requestDto) {
-        return blogService.updatePost(id, requestDto, requestDto.getPassword());
+        return blogService.updatePost(id, requestDto);
     }
 
     //선택한 게시글 삭제 API
     @DeleteMapping("/post/{id}")
     public BlogDeleteDto deletePost(@PathVariable Long id, @RequestBody BlogRequestDto requestDto) {
-        return blogService.deletePost(id, requestDto.getPassword());
+        return blogService.deletePost(id, requestDto);
     }
 }

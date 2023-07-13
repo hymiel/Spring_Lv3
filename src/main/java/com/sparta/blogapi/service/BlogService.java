@@ -9,6 +9,7 @@ import com.sparta.blogapi.jwt.JwtUtil;
 import com.sparta.blogapi.repository.BlogRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -44,7 +45,7 @@ public class BlogService {
     //게시글 작성 API
     //- 제목, 작성자명, 비밀번호, 작성 내용을 저장하고 저장된 게시글을 Client 로 반환하기
     @Transactional
-    public BlogResponseDto createPost(BlogRequestDto requestDto) throws InvalidTokenException {
+    public BlogResponseDto createPost(BlogRequestDto requestDto) throws InvalidTokenException{
         // 사용자 인증 정보 가져오기
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
@@ -76,19 +77,20 @@ public class BlogService {
         return new BlogResponseDto(blog);
     }
 
+    //수정코드 : 비밀번호 관련 중복코드 삭제
     //선택한 게시글 수정 API
     // - 수정을 요청할 때 수정할 데이터와 비밀번호를 같이 보내서 서버에서 비밀번호 일치 여부를 확인 한 후
     // - 제목, 작성자명, 작성 내용을 수정하고 수정된 게시글을 Client 로 반환하기
     @Transactional //트랜잭션 변경 감지
-    public BlogResponseDto updatePost(Long id, BlogRequestDto requestDto, String password) {
+    public BlogResponseDto updatePost(Long id, BlogRequestDto requestDto) {
         //아이디 값을 레포지토리에서 가져온 뒤, 해당하는 데이터가 없을 경우 예외
         Blog blog = blogRepository.findById(id).orElseThrow(() ->
                 new IllegalArgumentException("아이디가 존재하지 않습니다."));
 
         BlogResponseDto blogResponseDto = new BlogResponseDto(blog);
 
-        //blog 에 저장된 패스워드를 equals 메서드를 이용하여 비교 후 동일하면 if문 실행
-        if (blog.getPassword().equals(password)) {
+        //requestDto 에서 비밀번호를 가져와서 blog 객체의 비밀번호와 비교하는 코드로 수정
+        if (blog.getPassword().equals(requestDto.getPassword())){
             blog.update(requestDto);
             blogRepository.save(blog);
             return new BlogResponseDto(blog);
@@ -101,7 +103,7 @@ public class BlogService {
     // - 삭제를 요청할 때 비밀번호를 같이 보내서 서버에서 비밀번호 일치 여부를 확인 한 후
     // - 선택한 게시글을 삭제하고 Client 로 성공했다는 표시 반환하기
     @Transactional
-    public BlogDeleteDto deletePost(Long id, String password) {
+    public BlogDeleteDto deletePost(Long id, BlogRequestDto requestDto) {
         //아이디 값을 레포지토리에서 가져온 뒤, 해당하는 데이터가 없을 경우 예외
         Blog blog = blogRepository.findById(id).orElseThrow(() ->
                 new IllegalArgumentException("아이디가 존재하지 않습니다."));
@@ -109,7 +111,7 @@ public class BlogService {
         //msg 사용을 위한 객체
         BlogDeleteDto blogDeleteDto = new BlogDeleteDto();
 
-        if (blog.getPassword().equals(password)) {
+        if (blog.getPassword().equals(requestDto.getPassword())) {
             blogRepository.deleteById(id); // id 삭제
             blogDeleteDto.setMsg("글이 삭제되었습니다.");
         } else {
