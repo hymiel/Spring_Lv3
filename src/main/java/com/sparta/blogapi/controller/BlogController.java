@@ -6,6 +6,9 @@ import com.sparta.blogapi.dto.BlogResponseDto;
 import com.sparta.blogapi.jwt.InvalidTokenException;
 import com.sparta.blogapi.repository.BlogRepository;
 import com.sparta.blogapi.service.BlogService;
+import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -27,10 +30,20 @@ public class BlogController {
          return blogService.getPosts();
     }
 
-    //게시글 작성 API
+
+    // 튜터님 피드백 받은 걸로 코드 변경
+    //위 코드에서 throws 를 통해 예외를 던지는 메서드가 있는데요.
+    // Controller 는 요청을 처리하는 마지막 지점이기 때문에 예외를 던지지않고 받아줘야 합니다.
+    // 해당 예외를 받아서 에러응답을 구성해 리턴하도록 수정해주세요.
+    //게시글 작성 API - 수정코드
     @PostMapping("/posts")
-    public BlogResponseDto createPost(@RequestBody BlogRequestDto requestDto)throws InvalidTokenException{
-        return blogService.createPost(requestDto);
+    public ResponseEntity<BlogResponseDto> createPost(@RequestBody BlogRequestDto requestDto){
+        try {
+            BlogResponseDto post = blogService.createPost(requestDto);
+            return new ResponseEntity<>(post, HttpStatus.OK);
+        } catch (InvalidTokenException e) {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
     }
 
     //선택한 게시글 조회 API
