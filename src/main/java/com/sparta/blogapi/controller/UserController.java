@@ -27,7 +27,6 @@ public class UserController {
 //    public UserResponseDto signup(@RequestBody SignupRequestDto requestDto,HttpServletResponse res){
 //        return userService.signup(requestDto,res);
 //    }
-
     // 튜터님 피드백으로 바꾼 코드
     // 위 코드에서처럼 DTO를 그대로 응답하고있는데 ResponseEntity 로 감싸서 응답하는것을 추천드립니다.
     @PostMapping("/user/signup")
