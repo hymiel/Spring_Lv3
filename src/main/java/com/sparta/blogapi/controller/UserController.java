@@ -40,7 +40,6 @@ public class UserController {
 //2. 로그인 API
     @PostMapping("/user/login")
     public UserResponseDto login(@RequestBody LoginRequestDto requestDto, HttpServletResponse res) throws IOException {
-
         return userService.login(requestDto,res);
     }
 }

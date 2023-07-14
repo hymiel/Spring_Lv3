@@ -18,7 +18,7 @@ import java.util.List;
 public class Blog extends Timestamped{
         @Id
         @GeneratedValue (strategy = GenerationType.IDENTITY)
-        private Long id; // 게시글 고유 id
+        private Long postId; // 게시글 고유 id
         @Column(name = "title", nullable = false, length = 500)
         private String title; // 제목
         @Column(name = "username", nullable = false)
@@ -35,7 +35,7 @@ public class Blog extends Timestamped{
         private User author;
 
         @OneToMany (mappedBy = "blog")
-        private List<Comment> comments = new ArrayList<Comment>();
+        private List<Comment> commentsList = new ArrayList<Comment>();
 
     public Blog(BlogRequestDto requestDto) {
         this.title = requestDto.getTitle();
@@ -55,4 +55,7 @@ public class Blog extends Timestamped{
     }
 
 
+    public void addCommentList(Comment comment) {
+        this.commentsList.add(0,comment);
+    }
 }

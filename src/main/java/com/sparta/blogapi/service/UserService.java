@@ -1,7 +1,6 @@
 package com.sparta.blogapi.service;
 
 
-import com.mysql.cj.ServerVersion;
 import com.sparta.blogapi.dto.LoginRequestDto;
 import com.sparta.blogapi.dto.SignupRequestDto;
 import com.sparta.blogapi.dto.UserResponseDto;
@@ -17,7 +16,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.io.IOException;
-import java.util.Optional;
 
 @Service //Service 사용
 @RequiredArgsConstructor //생성자 주입으로 데이터베이스에 대한 생성자를 생성하지 않아도 됨
