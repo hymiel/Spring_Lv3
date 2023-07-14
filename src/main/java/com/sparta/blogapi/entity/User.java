@@ -29,10 +29,14 @@ public class User {    //사용자 정보 클래스
     @Column(nullable = false)
     private String password;
 
+    @Column(name = "user_role", nullable = false) // 유저 권한
+    @Enumerated(value = EnumType.STRING)
+    private UserRoleEnum role;
 
 
-    public User(String username, String password) {
+    public User(String username, String password, UserRoleEnum role) {
         this.username = username;
+        this.role = role;
         this.password = password;
 
     }

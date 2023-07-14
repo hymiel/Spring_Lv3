@@ -7,6 +7,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -15,7 +17,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor //파라미터가 없는 기본 생성자를 만들어줌
 public class Blog extends Timestamped{
         @Id
-        @GeneratedValue(strategy = GenerationType.IDENTITY)
+        @GeneratedValue (strategy = GenerationType.IDENTITY)
         private Long id; // 게시글 고유 id
         @Column(name = "title", nullable = false, length = 500)
         private String title; // 제목
@@ -31,6 +33,10 @@ public class Blog extends Timestamped{
         @ManyToOne
         @JoinColumn(name = "user_id")
         private User author;
+
+        @OneToMany (mappedBy = "blog")
+        private List<Comment> comments = new ArrayList<Comment>();
+
     public Blog(BlogRequestDto requestDto) {
         this.title = requestDto.getTitle();
         this.username = requestDto.getUsername();
@@ -47,4 +53,6 @@ public class Blog extends Timestamped{
         this.author = new User();
         this.author.setUsername(username);
     }
+
+
 }

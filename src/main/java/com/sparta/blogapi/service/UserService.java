@@ -1,10 +1,12 @@
 package com.sparta.blogapi.service;
 
 
+import com.mysql.cj.ServerVersion;
 import com.sparta.blogapi.dto.LoginRequestDto;
 import com.sparta.blogapi.dto.SignupRequestDto;
 import com.sparta.blogapi.dto.UserResponseDto;
 import com.sparta.blogapi.entity.User;
+import com.sparta.blogapi.entity.UserRoleEnum;
 import com.sparta.blogapi.jwt.JwtUtil;
 import com.sparta.blogapi.repository.UserRepository;
 import jakarta.servlet.http.HttpServletResponse;
@@ -26,6 +28,9 @@ public class UserService {
     private final PasswordEncoder passwordEncoder; //비밀번호 암호화 인터페이스
     private final JwtUtil jwtUtil;
 
+    // ADMIN_TOKEN
+    private final String ADMIN_TOKEN = "AAABnvxRVklrnYxKZ0aHgTBcXukeZygoC";
+
     //    1. 회원 가입 API
     public UserResponseDto signup(SignupRequestDto requestDto,HttpServletResponse res) {
         // username, password를 Client에서 전달받기
@@ -33,17 +38,24 @@ public class UserService {
         String password = passwordEncoder.encode(requestDto.getPassword());
 
         // 유저 중복확인
-        Optional<User> checkUsername = userRepository.findByUsername(username);
-        if (checkUsername.isPresent()) { // isPresent()는 Optional 객체가 비어있지 않은 경우에 true를 반환하고, 값이 존재하지 않는 경우에 false를 반환
+        if (userRepository.findByUsername(username).isPresent()) { // isPresent()는 Optional 객체가 비어있지 않은 경우에 true를 반환하고, 값이 존재하지 않는 경우에 false를 반환
             //중복된 유저네임이 존재 할 경우 예외처리
             throw new IllegalArgumentException("중복된 사용자가 존재합니다.");
         }
 
-        // 유저 등록
-        userRepository.save(new User(username,password));
-
-        UserResponseDto userResponseDto = new UserResponseDto("회원가입이 완료되었습니다.", 200);
+        // 사용자 ROLE 확인
+        UserRoleEnum role = UserRoleEnum.USER;
+        if (requestDto.isAdmin()) {
+            if (!ADMIN_TOKEN.equals(requestDto.getAdminToken())) {
+                throw new IllegalArgumentException("관리자 암호를 다시 확인해주세요.");
+            }
+            role = UserRoleEnum.ADMIN;
+        }
+        String authkey = requestDto.getAuthKey();
+        User user = new User(username, password, role);
+        userRepository.save(user);
         //    - DB에 중복된 username 이 없다면 회원을 저장하고 Client 로 성공했다는 메시지, 상태코드 반환하기
+        UserResponseDto userResponseDto = new UserResponseDto("회원가입이 완료되었습니다.", 200);
         return userResponseDto;
     }
 

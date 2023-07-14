@@ -30,4 +30,8 @@ public class SignupRequestDto { // 회원가입 시 필요한 정보
     @Pattern(regexp = "^[a-z0-9]*$",message = "알파벳 대소문자(a~z, A~Z), 숫자(0~9)")
     private String password;
 
+    private boolean admin = false;
+    private String adminToken = "";
+    private String authKey;
+    private boolean isConfirm =false;
 }

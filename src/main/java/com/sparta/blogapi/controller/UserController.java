@@ -23,7 +23,7 @@ public class UserController {
 
 
 //    1. 회원 가입 API
-//    @PostMapping("/user/signup")ㅌ
+//    @PostMapping("/user/signup")
 //    public UserResponseDto signup(@RequestBody SignupRequestDto requestDto,HttpServletResponse res){
 //        return userService.signup(requestDto,res);
 //    }
